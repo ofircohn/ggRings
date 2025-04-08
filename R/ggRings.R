@@ -20,7 +20,7 @@
 #' @import ggnewscale
 #' @import ggforce
 #' @import RColorBrewer
-#' #' @examples
+#' @examples
 #' data(geneOfInterest)
 #' plot_circular_rings(
 #'   data = geneOfInterest,

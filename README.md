@@ -20,6 +20,6 @@ plot_circular_rings(
   fill_low = "white"
 )
 
-## Example Plot
+# Plot
 
 ![Example plot](data/example_plot.png)

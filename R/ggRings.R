@@ -19,12 +19,6 @@
 #' @return A `ggplot` object representing the radial heatmap.
 #' @export
 
-library(ggplot2)
-library(ggforce)
-library(ggnewscale)
-library(dplyr)
-library(RColorBrewer)
-
 plot_circular_rings <- function(data, 
                                 ring_cols, 
                                 annotation_col = "rs",     
@@ -119,26 +113,4 @@ plot_circular_rings <- function(data,
   
   return(p)
 }
-
-
-# Example data
-geneOfInterest <- data.frame(
-  rs = c("rs10127495", "rs10127727", "rs10157163", "rs10465507", "rs10644515", 
-         "rs10798264", "rs10912553", "rs10912555", "rs10912560", "rs10912561"),
-  ATAC = runif(10, 0, 1),
-  R2 = runif(10, 0, 1),
-  H3K27ac = runif(10, 0, 1)
-)
-
-plot_circular_rings(
-  data = geneOfInterest,
-  ring_cols = c("ATAC", "R2", "H3K27ac"),
-  annotation_col = "rs",
-  ring_colors = c("darkred", "darkblue", "seagreen"),
-  annotation_distance = 1,
-  add_ticks = TRUE,
-  tick_length = 0.1,
-  title = NULL,
-  fill_low = "white",   # Custom low color
-)
 

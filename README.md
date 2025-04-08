@@ -4,10 +4,8 @@ Creating circular heatmaps with ggplot2
 # Install
 devtools::install_github("ofircohn/ggRings")
 
-# Example 
-library(ggRings)
-
 ```r
+data(geneOfInterest)
 plot_circular_rings(
   data = geneOfInterest,
   ring_cols = c("ATAC", "R2", "H3K27ac"),
@@ -19,5 +17,6 @@ plot_circular_rings(
   title = NULL,
   fill_low = "white"
 )
+```
 
-	![Alternate text for image](data/example_plot.png)
+![example plot](data/example_plot.png)

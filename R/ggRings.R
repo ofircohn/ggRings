@@ -20,6 +20,19 @@
 #' @import ggnewscale
 #' @import ggforce
 #' @import RColorBrewer
+#' #' @examples
+#' data(geneOfInterest)
+#' plot_circular_rings(
+#'   data = geneOfInterest,
+#'   ring_cols = c("ATAC", "R2", "H3K27ac"),
+#'   annotation_col = "rs",
+#'   ring_colors = c("darkred", "darkblue", "seagreen", "yellow"),
+#'   annotation_distance = 1,
+#'   add_ticks = TRUE,
+#'   tick_length = 0.1,
+#'   title = NULL,
+#'   fill_low = "white"
+#' )
 #' @return A `ggplot` object representing the radial heatmap.
 #' @export
 

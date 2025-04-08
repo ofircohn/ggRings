@@ -1,11 +1,11 @@
-#' Title: radial heatmap plotter
+#' Circular heatmap
 #' 
-#' Description: This function generates a radial heatmap (circular rings)
+#' generates a radial heatmap (circular rings)
 #' expression data using ggplot2. It displays multiple layers (rings) representing
-#' different gene expression metrics, along with optional annotations and ticks.
+#' different variables.
 #' 
 #' @param data A data frame containing gene expression data. Each column represents
-#' a different variable, and the row names should be gene IDs or SNPs.
+#' a different variable
 #' @param ring_cols A vector of column names from the `data` frame to be plotted as rings.
 #' @param annotation_col The column name for annotations (e.g., SNP IDs or gene names).
 #' @param ring_colors A vector of colors to use for each ring.
@@ -15,7 +15,11 @@
 #' @param add_ticks Logical indicating whether to add ticks on the outer ring.
 #' @param tick_length The length of the ticks.
 #' @param fill_low The color used for the lowest values in the rings.
-#' 
+#' @import ggplot2
+#' @import dplyr
+#' @import ggnewscale
+#' @import ggforce
+#' @import RColorBrewer
 #' @return A `ggplot` object representing the radial heatmap.
 #' @export
 

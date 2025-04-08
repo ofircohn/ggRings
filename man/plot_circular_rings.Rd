@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggRings.R
 \name{plot_circular_rings}
 \alias{plot_circular_rings}
-\title{Title: radial heatmap plotter}
+\title{Circular heatmap}
 \usage{
 plot_circular_rings(
   data,
@@ -19,7 +19,7 @@ plot_circular_rings(
 }
 \arguments{
 \item{data}{A data frame containing gene expression data. Each column represents
-a different variable, and the row names should be gene IDs or SNPs.}
+a different variable}
 
 \item{ring_cols}{A vector of column names from the `data` frame to be plotted as rings.}
 
@@ -43,7 +43,7 @@ a different variable, and the row names should be gene IDs or SNPs.}
 A `ggplot` object representing the radial heatmap.
 }
 \description{
-Description: This function generates a radial heatmap (circular rings)
+generates a radial heatmap (circular rings)
 expression data using ggplot2. It displays multiple layers (rings) representing
-different gene expression metrics, along with optional annotations and ticks.
+different variables.
 }

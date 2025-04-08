@@ -1,3 +1,24 @@
+#' Title: radial heatmap plotter
+#' 
+#' Description: This function generates a radial heatmap (circular rings)
+#' expression data using ggplot2. It displays multiple layers (rings) representing
+#' different gene expression metrics, along with optional annotations and ticks.
+#' 
+#' @param data A data frame containing gene expression data. Each column represents
+#' a different variable, and the row names should be gene IDs or SNPs.
+#' @param ring_cols A vector of column names from the `data` frame to be plotted as rings.
+#' @param annotation_col The column name for annotations (e.g., SNP IDs or gene names).
+#' @param ring_colors A vector of colors to use for each ring.
+#' @param ring_width The width of each ring.
+#' @param title The title for the plot.
+#' @param annotation_distance The distance from the center for placing annotations.
+#' @param add_ticks Logical indicating whether to add ticks on the outer ring.
+#' @param tick_length The length of the ticks.
+#' @param fill_low The color used for the lowest values in the rings.
+#' 
+#' @return A `ggplot` object representing the radial heatmap.
+#' @export
+
 library(ggplot2)
 library(ggforce)
 library(ggnewscale)
@@ -100,20 +121,20 @@ plot_circular_rings <- function(data,
 }
 
 
+# Example data
+geneOfInterest <- data.frame(
+  rs = c("rs10127495", "rs10127727", "rs10157163", "rs10465507", "rs10644515", 
+         "rs10798264", "rs10912553", "rs10912555", "rs10912560", "rs10912561"),
+  ATAC = runif(10, 0, 1),
+  R2 = runif(10, 0, 1),
+  H3K27ac = runif(10, 0, 1)
+)
 
-
-
-geneOfInterest <- as.data.frame(gwas_ABC_ATAC_LD.H3K27ac) %>%
-  dplyr::select(rs, ATAC, R2,score,PP) %>% drop_na(rs) %>% mutate(rs = factor(rs)) %>%
-  dplyr::rename(.,H3K27ac = "score") %>% mutate(across(where(is.numeric), ~replace_na(., 0))) 
-
-
-# Use the function with a custom low value (e.g., "grey80" instead of white)
 plot_circular_rings(
   data = geneOfInterest,
-  ring_cols = c("ATAC", "R2", "H3K27ac","PP"),
+  ring_cols = c("ATAC", "R2", "H3K27ac"),
   annotation_col = "rs",
-  ring_colors = c("darkred", "darkblue", "seagreen","yellow"),
+  ring_colors = c("darkred", "darkblue", "seagreen"),
   annotation_distance = 1,
   add_ticks = TRUE,
   tick_length = 0.1,

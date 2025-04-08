@@ -113,4 +113,5 @@ plot_circular_rings <- function(data,
   
   return(p)
 }
+devtools::install("path/to/ggRings", rebuild = TRUE)
 

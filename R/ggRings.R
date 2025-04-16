@@ -98,9 +98,12 @@ plot_circular_rings <- function(data,
   )
   p <- p +
     geom_text(data = annotations_df,
-              aes(x = x, y = y, label = annotation, angle = angle * 180 / pi),
+              aes(x = x, y = y, label = annotation),
               size = 3, fontface = "bold", color = "black",
-              hjust = 0.5, vjust = 0.5)
+              angle = ifelse(annotations_df$angle > pi/2 & annotations_df$angle < 3*pi/2, 
+                             annotations_df$angle * 180/pi + 180, 
+                             annotations_df$angle * 180/pi),
+              hjust = ifelse(annotations_df$angle > pi/2 & annotations_df$angle < 3*pi/2, 1, 0))
   
   if (add_ticks) {
     tick_angles <- seq(0, 2 * pi, length.out = n + 1)

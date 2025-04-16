@@ -42,26 +42,37 @@ plot_circular_rings <- function(data,
                                 ring_colors = NULL, 
                                 ring_width = 0.5, 
                                 title = "title",
-                                annotation_distance = 1,  
+                                annotation_distance = 0.3,
                                 add_ticks = TRUE,           
                                 tick_length = 0.1,
-                                fill_low = "white") {      
+                                fill_low = "white",
+                                legend_position = "right",
+                                legend_margin = 0.15,       
+                                text_size = 3) {      
   if (length(fill_low) == 1) {
     fill_low <- rep(fill_low, length(ring_cols))
   } else if (length(fill_low) != length(ring_cols)) {
     stop("Length of fill_low must be 1 or equal to the number of ring_cols.")
   }
+  
   n <- nrow(data)
+  
   data <- data %>%
     mutate(
       rs = as.character(rs),  
+      id = 1:n,
+      segment_angle = 2 * pi / n,
       start = 2 * pi * (row_number() - 1) / n,
-      end   = 2 * pi * row_number() / n
+      end = 2 * pi * row_number() / n,
+      mid = (start + end) / 2  
     )
+  
   if (is.null(ring_colors)) {
     ring_colors <- RColorBrewer::brewer.pal(length(ring_cols), "Set2")
   }
+  
   p <- ggplot()
+  
   for (i in seq_along(ring_cols)) {
     r0 <- 1 + (i - 1) * (ring_width + 0.1)  
     r  <- r0 + ring_width                   
@@ -83,49 +94,77 @@ plot_circular_rings <- function(data,
         name = col,
         guide = guide_colorbar(ticks.colour = "black", frame.colour = "black")
       )
+    
     if (i < length(ring_cols)) {
       p <- p + new_scale_fill()
     }
   }
+  
   outer_ring_outer <- 1 + (length(ring_cols) - 1) * (ring_width + 0.1) + ring_width
-  annotation_radius <- outer_ring_outer + annotation_distance
-  angles <- seq(0, 2 * pi, length.out = n + 1)[-1]   
-  annotations_df <- data.frame(
-    annotation = data[[annotation_col]],
-    angle = angles,
-    x = annotation_radius * cos(angles),
-    y = annotation_radius * sin(angles)
-  )
-  p <- p +
-    geom_text(data = annotations_df,
-              aes(x = x, y = y, label = annotation),
-              size = 3, fontface = "bold", color = "black",
-              angle = ifelse(annotations_df$angle > pi/2 & annotations_df$angle < 3*pi/2, 
-                             annotations_df$angle * 180/pi + 180, 
-                             annotations_df$angle * 180/pi),
-              hjust = ifelse(annotations_df$angle > pi/2 & annotations_df$angle < 3*pi/2, 1, 0))
   
   if (add_ticks) {
-    tick_angles <- seq(0, 2 * pi, length.out = n + 1)
-    ticks_df <- data.frame(
-      angle = tick_angles,
-      x_start = outer_ring_outer * cos(tick_angles),
-      y_start = outer_ring_outer * sin(tick_angles),
-      x_end = (outer_ring_outer + tick_length) * cos(tick_angles),
-      y_end = (outer_ring_outer + tick_length) * sin(tick_angles)
-    )
+    tick_data <- data %>%
+      mutate(
+        x_start = outer_ring_outer * cos(mid),
+        y_start = outer_ring_outer * sin(mid),
+        x_end = (outer_ring_outer + tick_length) * cos(mid),
+        y_end = (outer_ring_outer + tick_length) * sin(mid)
+      )
     
     p <- p +
-      geom_segment(data = ticks_df,
+      geom_segment(data = tick_data,
                    aes(x = x_start, y = y_start, xend = x_end, yend = y_end),
                    color = "black", size = 0.5)
   }
   
+  annotations_df <- data %>%
+    mutate(
+      angle_rad = mid,
+      angle_deg = (angle_rad * 180 / pi) %% 360,
+      x = (outer_ring_outer + tick_length + annotation_distance) * cos(angle_rad),
+      y = (outer_ring_outer + tick_length + annotation_distance) * sin(angle_rad),
+      angle_text = ifelse(angle_deg > 90 & angle_deg < 270, angle_deg + 180, angle_deg),
+      hjust = ifelse(angle_deg > 90 & angle_deg < 270, 1, 0),
+      vjust = 0.5
+    )
+  
   p <- p +
-    coord_fixed() +
+    geom_text(data = annotations_df,
+              aes(x = x, y = y, label = !!sym(annotation_col)),
+              angle = annotations_df$angle_text,
+              hjust = annotations_df$hjust,
+              vjust = annotations_df$vjust,
+              size = text_size, 
+              fontface = "bold", 
+              color = "black")
+  
+  max_radius <- max(outer_ring_outer + tick_length + annotation_distance, 
+                    max(abs(annotations_df$x), abs(annotations_df$y))) * 1.1
+  
+  if (legend_position == "right") {
+    x_limits <- c(-max_radius, max_radius * (1 + legend_margin))
+    y_limits <- c(-max_radius, max_radius)
+  } else if (legend_position == "left") {
+    x_limits <- c(-max_radius * (1 + legend_margin), max_radius)
+    y_limits <- c(-max_radius, max_radius)
+  } else if (legend_position == "top") {
+    x_limits <- c(-max_radius, max_radius)
+    y_limits <- c(-max_radius, max_radius * (1 + legend_margin))
+  } else if (legend_position == "bottom") {
+    x_limits <- c(-max_radius, max_radius)
+    y_limits <- c(-max_radius * (1 + legend_margin), max_radius)
+  } else {
+    x_limits <- c(-max_radius, max_radius)
+    y_limits <- c(-max_radius, max_radius)
+  }
+  
+  p <- p +
+    coord_fixed(xlim = x_limits, ylim = y_limits) +
     theme_void() +
-    theme(legend.position = "right") +
-    labs(title = title)
+    theme(
+      legend.position = legend_position,
+      plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")
+    )
   
   if (!is.null(title)) {
     p <- p + labs(title = title)
@@ -133,4 +172,3 @@ plot_circular_rings <- function(data,
   
   return(p)
 }
-
